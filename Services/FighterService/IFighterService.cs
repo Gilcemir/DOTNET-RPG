@@ -4,9 +4,9 @@ namespace DOTNET_RPG.Services.FighterService
 {
     public interface IFighterService
     {
-         Task<List<Fighter>> GetAllFighters();
-         Task<Fighter> GetFighterById(int id);
+         Task<ServiceResponse<List<Fighter>>> GetAllFighters();
+         Task<ServiceResponse<Fighter>> GetFighterById(int id);
 
-         Task<List<Fighter>> AddFighter(Fighter newFighter);
+         Task<ServiceResponse<List<Fighter>>> AddFighter(Fighter newFighter);
     }
 }

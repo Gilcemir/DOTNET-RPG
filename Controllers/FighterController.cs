@@ -18,14 +18,14 @@ namespace DOTNET_RPG.Controllers
         }
 
     [HttpGet]
-    public async Task<ActionResult<Fighter>> Get()
+    public async Task<ActionResult<ServiceResponse<List<Fighter>>>> Get()
     {
         return Ok(await _fighterService.GetAllFighters());
 
     }
 
     [HttpGet("{Id}")]
-    public async Task<ActionResult<Fighter>> GetByID(int Id)
+    public async Task<ActionResult<ServiceResponse<Fighter>>> GetByID(int Id)
     {
         var fighter = _fighterService.GetFighterById(Id);
         if (fighter == null)
@@ -35,7 +35,7 @@ namespace DOTNET_RPG.Controllers
         return Ok(await fighter);
     }
     [HttpPost]
-    public async Task<ActionResult<List<Fighter>>> AddFighter(Fighter newFighter)
+    public async Task<ActionResult<ServiceResponse<List<Fighter>>>> AddFighter(Fighter newFighter)
     {
         return Ok(await _fighterService.AddFighter(newFighter));
     }
