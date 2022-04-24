@@ -1,4 +1,5 @@
 using DOTNET_RPG.Models;
+using DOTNET_RPG.Services.FighterService;
 using Microsoft.AspNetCore.Mvc;
 using System.Linq;
 namespace DOTNET_RPG.Controllers
@@ -7,36 +8,38 @@ namespace DOTNET_RPG.Controllers
     [Route("[controller]")]
     public class FighterController : ControllerBase
     {
-        private static List<Fighter> fighters = new List<Fighter>{
-            new Fighter{id = 0, Name = "Jose "},
-            new Fighter {id = 1, Name = "Gil"},
-            new Fighter {id = 200, Name = "Arthur"}
-            };
-        
-        [HttpGet]
-        public ActionResult<Fighter> Get()
-        {
 
-            return Ok(fighters);
+        private readonly IFighterService _fighterService;
+
+        public FighterController(IFighterService fighterService)
+        {
+            _fighterService = fighterService;
+            
         }
 
-        [HttpGet("{id}")]
-        public ActionResult<Fighter> GetByID(int id)
-        {
-            var fighter = fighters.FirstOrDefault(c => c.id == id);
-            if(fighter  == null)
-            {
-                return NotFound();
-            }
-            return Ok(fighter);
-        }
-        [HttpPost]
-        public ActionResult<List<Fighter>> AddFighter(Fighter newFighter)
-        {
-            fighters.Add(newFighter);
-            return Ok(fighters);
-        }
-
+    [HttpGet]
+    public async Task<ActionResult<Fighter>> Get()
+    {
+        return Ok(await _fighterService.GetAllFighters());
 
     }
+
+    [HttpGet("{Id}")]
+    public async Task<ActionResult<Fighter>> GetByID(int Id)
+    {
+        var fighter = _fighterService.GetFighterById(Id);
+        if (fighter == null)
+        {
+            return NotFound();
+        }
+        return Ok(await fighter);
+    }
+    [HttpPost]
+    public async Task<ActionResult<List<Fighter>>> AddFighter(Fighter newFighter)
+    {
+        return Ok(await _fighterService.AddFighter(newFighter));
+    }
+
+
+}
 }
