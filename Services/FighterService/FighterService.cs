@@ -1,3 +1,5 @@
+using AutoMapper;
+using DOTNET_RPG.Dtos.Fighter;
 using DOTNET_RPG.Models;
 using System.Linq;
 
@@ -10,26 +12,33 @@ namespace DOTNET_RPG.Services.FighterService
             new Fighter {Id = 1, Name = "Gil"},
             new Fighter {Id = 200, Name = "Arthur"}
             };
+        private readonly IMapper _mapper;
 
-        public async Task<ServiceResponse<List<Fighter>>> AddFighter(Fighter newFighter)
+        public FighterService(IMapper mapper)
         {
-            var serviceResponse = new ServiceResponse<List<Fighter>>();
-            fighters.Add(newFighter);
-            serviceResponse.Data = fighters;
+            _mapper = mapper;
+        }
+        public async Task<ServiceResponse<List<GetFighterDto>>> AddFighter(AddFighterDto newFighter)
+        {
+            var serviceResponse = new ServiceResponse<List<GetFighterDto>>();
+            Fighter fighter = _mapper.Map<Fighter>(newFighter);
+            fighter.Id = fighters.Max(c => c.Id) + 1; 
+            fighters.Add(fighter);
+            serviceResponse.Data = fighters.Select(c => _mapper.Map<GetFighterDto>(c)).ToList();
             return serviceResponse;
         }
 
-        public async Task<ServiceResponse<List<Fighter>>> GetAllFighters()
+        public async Task<ServiceResponse<List<GetFighterDto>>> GetAllFighters()
         {
-            var serviceResponse = new ServiceResponse<List<Fighter>>();
-            serviceResponse.Data = fighters;
+            var serviceResponse = new ServiceResponse<List<GetFighterDto>>();
+            serviceResponse.Data = fighters.Select(c => _mapper.Map<GetFighterDto>(c)).ToList();
             return serviceResponse;
         }
 
-        public async Task<ServiceResponse<Fighter>> GetFighterById(int id)
+        public async Task<ServiceResponse<GetFighterDto>> GetFighterById(int id)
         {
-            var serviceResponse = new ServiceResponse<Fighter>();
-            serviceResponse.Data = fighters.FirstOrDefault(c => c.Id == id);
+            var serviceResponse = new ServiceResponse<GetFighterDto>();
+            serviceResponse.Data = _mapper.Map<GetFighterDto>(fighters.FirstOrDefault(c => c.Id == id));
             return serviceResponse;
         }
     }

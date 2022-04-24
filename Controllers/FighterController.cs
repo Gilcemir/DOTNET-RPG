@@ -1,3 +1,4 @@
+using DOTNET_RPG.Dtos.Fighter;
 using DOTNET_RPG.Models;
 using DOTNET_RPG.Services.FighterService;
 using Microsoft.AspNetCore.Mvc;
@@ -18,14 +19,14 @@ namespace DOTNET_RPG.Controllers
         }
 
     [HttpGet]
-    public async Task<ActionResult<ServiceResponse<List<Fighter>>>> Get()
+    public async Task<ActionResult<ServiceResponse<List<GetFighterDto>>>> Get()
     {
         return Ok(await _fighterService.GetAllFighters());
 
     }
 
     [HttpGet("{Id}")]
-    public async Task<ActionResult<ServiceResponse<Fighter>>> GetByID(int Id)
+    public async Task<ActionResult<ServiceResponse<GetFighterDto>>> GetByID(int Id)
     {
         var fighter = _fighterService.GetFighterById(Id);
         if (fighter == null)
@@ -35,7 +36,7 @@ namespace DOTNET_RPG.Controllers
         return Ok(await fighter);
     }
     [HttpPost]
-    public async Task<ActionResult<ServiceResponse<List<Fighter>>>> AddFighter(Fighter newFighter)
+    public async Task<ActionResult<ServiceResponse<List<GetFighterDto>>>> AddFighter(AddFighterDto newFighter)
     {
         return Ok(await _fighterService.AddFighter(newFighter));
     }
