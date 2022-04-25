@@ -9,5 +9,7 @@ namespace DOTNET_RPG.Services.FighterService
          Task<ServiceResponse<GetFighterDto>> GetFighterById(int id);
 
          Task<ServiceResponse<List<GetFighterDto>>> AddFighter(AddFighterDto newFighter);
+
+         Task<ServiceResponse<GetFighterDto>> UpdateFighter(UpdateFighterDto updatedFighter);
     }
 }
