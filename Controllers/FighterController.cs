@@ -28,7 +28,6 @@ namespace DOTNET_RPG.Controllers
     [HttpGet("{Id}")]
     public async Task<ActionResult<ServiceResponse<GetFighterDto>>> GetByID(int Id)
     {
-        
         var fighter = await _fighterService.GetFighterById(Id);
 
         if (fighter.Success == false)
