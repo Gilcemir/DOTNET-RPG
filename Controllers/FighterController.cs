@@ -28,12 +28,14 @@ namespace DOTNET_RPG.Controllers
     [HttpGet("{Id}")]
     public async Task<ActionResult<ServiceResponse<GetFighterDto>>> GetByID(int Id)
     {
-        var fighter = _fighterService.GetFighterById(Id);
-        if (fighter == null)
+        
+        var fighter = await _fighterService.GetFighterById(Id);
+
+        if (fighter.Success == false)
         {
-            return NotFound();
+            return NotFound(fighter);
         }
-        return Ok(await fighter);
+        return Ok(fighter);
     }
     [HttpPost]
     public async Task<ActionResult<ServiceResponse<List<GetFighterDto>>>> AddFighter(AddFighterDto newFighter)

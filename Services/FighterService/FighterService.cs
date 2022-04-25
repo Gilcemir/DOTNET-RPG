@@ -22,7 +22,7 @@ namespace DOTNET_RPG.Services.FighterService
         {
             var serviceResponse = new ServiceResponse<List<GetFighterDto>>();
             Fighter fighter = _mapper.Map<Fighter>(newFighter);
-            fighter.Id = fighters.Max(c => c.Id) + 1; 
+            fighter.Id = fighters.Max(c => c.Id) + 1;
             fighters.Add(fighter);
             serviceResponse.Data = fighters.Select(c => _mapper.Map<GetFighterDto>(c)).ToList();
             return serviceResponse;
@@ -38,7 +38,16 @@ namespace DOTNET_RPG.Services.FighterService
         public async Task<ServiceResponse<GetFighterDto>> GetFighterById(int id)
         {
             var serviceResponse = new ServiceResponse<GetFighterDto>();
-            serviceResponse.Data = _mapper.Map<GetFighterDto>(fighters.FirstOrDefault(c => c.Id == id));
+            try
+            {
+                Fighter fighter = fighters.First(c => c.Id == id);
+                serviceResponse.Data = _mapper.Map<GetFighterDto>(fighter);
+            }
+            catch (Exception ex)
+            {
+                serviceResponse.Success = false;
+                serviceResponse.Message = ex.Message;
+            }
             return serviceResponse;
         }
 
@@ -58,7 +67,8 @@ namespace DOTNET_RPG.Services.FighterService
                 fighter.Origin = updatedFighter.Origin;
 
                 serviceResponse.Data = _mapper.Map<GetFighterDto>(fighter);
-            }catch(Exception ex)
+            }
+            catch (Exception ex)
             {
                 serviceResponse.Success = false;
                 serviceResponse.Message = ex.Message;
