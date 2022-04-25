@@ -41,5 +41,29 @@ namespace DOTNET_RPG.Services.FighterService
             serviceResponse.Data = _mapper.Map<GetFighterDto>(fighters.FirstOrDefault(c => c.Id == id));
             return serviceResponse;
         }
+
+        public async Task<ServiceResponse<GetFighterDto>> UpdateFighter(UpdateFighterDto updatedFighter)
+        {
+            var serviceResponse = new ServiceResponse<GetFighterDto>();
+            try
+            {
+                Fighter fighter = fighters.FirstOrDefault(c => c.Id == updatedFighter.Id);
+
+                fighter.Name = updatedFighter.Name;
+                fighter.HitPoints = updatedFighter.HitPoints;
+                fighter.Takedown = updatedFighter.Takedown;
+                fighter.Submission = updatedFighter.Submission;
+                fighter.Defense = updatedFighter.Defense;
+                fighter.Strike = updatedFighter.Strike;
+                fighter.Origin = updatedFighter.Origin;
+
+                serviceResponse.Data = _mapper.Map<GetFighterDto>(fighter);
+            }catch(Exception ex)
+            {
+                serviceResponse.Success = false;
+                serviceResponse.Message = ex.Message;
+            }
+            return serviceResponse;
+        }
     }
 }

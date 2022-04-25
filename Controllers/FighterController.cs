@@ -41,6 +41,13 @@ namespace DOTNET_RPG.Controllers
         return Ok(await _fighterService.AddFighter(newFighter));
     }
 
-
+    [HttpPut]
+    public async Task<ActionResult<ServiceResponse<GetFighterDto>>> UpdateFighterDto(UpdateFighterDto updatedFighter){
+        var response = await _fighterService.UpdateFighter(updatedFighter);
+        if(response.Success == false){
+            return NotFound(response);
+        } 
+        return Ok(response);
+    }
 }
 }
