@@ -75,5 +75,22 @@ namespace DOTNET_RPG.Services.FighterService
             }
             return serviceResponse;
         }
+
+        public async Task<ServiceResponse<List<GetFighterDto>>> DeleteFighter(int id)
+        {
+            var serviceResponse = new ServiceResponse<List<GetFighterDto>>();
+            try
+            {
+                Fighter fighter = fighters.First(c => c.Id == id);
+                fighters.Remove(fighter);
+                serviceResponse.Data = fighters.Select(c => _mapper.Map<GetFighterDto>(c)).ToList();
+            }
+            catch (Exception ex)
+            {
+                serviceResponse.Success = false;
+                serviceResponse.Message = ex.Message;
+            }
+            return serviceResponse;
+        }
     }
 }

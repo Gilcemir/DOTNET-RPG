@@ -15,40 +15,52 @@ namespace DOTNET_RPG.Controllers
         public FighterController(IFighterService fighterService)
         {
             _fighterService = fighterService;
-            
+
         }
 
-    [HttpGet]
-    public async Task<ActionResult<ServiceResponse<List<GetFighterDto>>>> Get()
-    {
-        return Ok(await _fighterService.GetAllFighters());
-
-    }
-
-    [HttpGet("{Id}")]
-    public async Task<ActionResult<ServiceResponse<GetFighterDto>>> GetByID(int Id)
-    {
-        var fighter = await _fighterService.GetFighterById(Id);
-
-        if (fighter.Success == false)
+        [HttpGet]
+        public async Task<ActionResult<ServiceResponse<List<GetFighterDto>>>> Get()
         {
-            return NotFound(fighter);
-        }
-        return Ok(fighter);
-    }
-    [HttpPost]
-    public async Task<ActionResult<ServiceResponse<List<GetFighterDto>>>> AddFighter(AddFighterDto newFighter)
-    {
-        return Ok(await _fighterService.AddFighter(newFighter));
-    }
+            return Ok(await _fighterService.GetAllFighters());
 
-    [HttpPut]
-    public async Task<ActionResult<ServiceResponse<GetFighterDto>>> UpdateFighterDto(UpdateFighterDto updatedFighter){
-        var response = await _fighterService.UpdateFighter(updatedFighter);
-        if(response.Success == false){
-            return NotFound(response);
-        } 
-        return Ok(response);
+        }
+
+        [HttpGet("{Id}")]
+        public async Task<ActionResult<ServiceResponse<GetFighterDto>>> GetByID(int Id)
+        {
+            var fighter = await _fighterService.GetFighterById(Id);
+
+            if (fighter.Success == false)
+            {
+                return NotFound(fighter);
+            }
+            return Ok(fighter);
+        }
+        [HttpPost]
+        public async Task<ActionResult<ServiceResponse<List<GetFighterDto>>>> AddFighter(AddFighterDto newFighter)
+        {
+            return Ok(await _fighterService.AddFighter(newFighter));
+        }
+
+        [HttpPut]
+        public async Task<ActionResult<ServiceResponse<GetFighterDto>>> UpdateFighterDto(UpdateFighterDto updatedFighter)
+        {
+            var response = await _fighterService.UpdateFighter(updatedFighter);
+            if (response.Success == false)
+            {
+                return NotFound(response);
+            }
+            return Ok(response);
+        }
+        [HttpDelete("{Id}")]
+        public async Task<ActionResult<ServiceResponse<List<GetFighterDto>>>> Delete(int Id)
+        {
+            var response = await _fighterService.DeleteFighter(Id);
+            if (response.Success == false)
+            {
+                return NotFound(response);
+            }
+            return Ok(response);
+        }
     }
-}
 }
