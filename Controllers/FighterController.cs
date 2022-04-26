@@ -30,7 +30,7 @@ namespace DOTNET_RPG.Controllers
         {
             var fighter = await _fighterService.GetFighterById(Id);
 
-            if (fighter.Success == false)
+            if (fighter.Data == null)
             {
                 return NotFound(fighter);
             }
@@ -46,7 +46,7 @@ namespace DOTNET_RPG.Controllers
         public async Task<ActionResult<ServiceResponse<GetFighterDto>>> UpdateFighterDto(UpdateFighterDto updatedFighter)
         {
             var response = await _fighterService.UpdateFighter(updatedFighter);
-            if (response.Success == false)
+            if (response.Data == null)
             {
                 return NotFound(response);
             }
@@ -56,7 +56,7 @@ namespace DOTNET_RPG.Controllers
         public async Task<ActionResult<ServiceResponse<List<GetFighterDto>>>> Delete(int Id)
         {
             var response = await _fighterService.DeleteFighter(Id);
-            if (response.Success == false)
+            if (response.Data == null)
             {
                 return NotFound(response);
             }
