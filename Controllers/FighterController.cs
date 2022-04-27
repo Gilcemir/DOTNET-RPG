@@ -42,6 +42,12 @@ namespace DOTNET_RPG.Controllers
             return Ok(await _fighterService.AddFighter(newFighter));
         }
 
+        [HttpPut("{Id}")]
+        public async Task<ActionResult<ServiceResponse<GetFighterDto>>> UpdateFighterById(AddFighterDto updatedFighter, int Id)
+        {
+            return Ok(await _fighterService.UpdateFighterById(updatedFighter, Id));
+        }
+
         [HttpPut]
         public async Task<ActionResult<ServiceResponse<GetFighterDto>>> UpdateFighterDto(UpdateFighterDto updatedFighter)
         {

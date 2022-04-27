@@ -78,6 +78,31 @@ namespace DOTNET_RPG.Services.FighterService
             }
             return serviceResponse;
         }
+        public async Task<ServiceResponse<GetFighterDto>> UpdateFighterById(AddFighterDto updatedFighter, int id)
+        {
+            var serviceResponse = new ServiceResponse<GetFighterDto>();
+            try
+            {
+                Fighter fighter = await _context.Fighters.FirstOrDefaultAsync(c => c.Id == id);
+
+                fighter.Name = updatedFighter.Name;
+                fighter.HitPoints = updatedFighter.HitPoints;
+                fighter.Takedown = updatedFighter.Takedown;
+                fighter.Submission = updatedFighter.Submission;
+                fighter.Defense = updatedFighter.Defense;
+                fighter.Strike = updatedFighter.Strike;
+                fighter.Origin = updatedFighter.Origin;
+
+                await _context.SaveChangesAsync();
+                serviceResponse.Data = _mapper.Map<GetFighterDto>(fighter);
+            }
+            catch (Exception ex)
+            {
+                serviceResponse.Success = false;
+                serviceResponse.Message = ex.Message;
+            }
+            return serviceResponse;
+        }
 
         public async Task<ServiceResponse<List<GetFighterDto>>> DeleteFighter(int id)
         {
