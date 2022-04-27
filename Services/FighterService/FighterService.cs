@@ -9,11 +9,7 @@ namespace DOTNET_RPG.Services.FighterService
 {
     public class FighterService : IFighterService
     {
-        private static List<Fighter> fighters = new List<Fighter>{
-            new Fighter{Id = 0, Name = "Jose "},
-            new Fighter {Id = 1, Name = "Gil"},
-            new Fighter {Id = 200, Name = "Arthur"}
-            };
+
         private readonly IMapper _mapper;
         private readonly DataContext _context;
 
@@ -88,9 +84,10 @@ namespace DOTNET_RPG.Services.FighterService
             var serviceResponse = new ServiceResponse<List<GetFighterDto>>();
             try
             {
-                Fighter fighter = fighters.First(c => c.Id == id);
-                fighters.Remove(fighter);
-                serviceResponse.Data = fighters.Select(c => _mapper.Map<GetFighterDto>(c)).ToList();
+                Fighter fighter = await _context.Fighters.FirstAsync(c => c.Id == id);
+                _context.Fighters.Remove(fighter);
+                await _context.SaveChangesAsync();
+                serviceResponse.Data = _context.Fighters.Select(c => _mapper.Map<GetFighterDto>(c)).ToList();
             }
             catch (Exception ex)
             {
