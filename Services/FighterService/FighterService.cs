@@ -1,6 +1,8 @@
 using AutoMapper;
+using DOTNET_RPG.Data;
 using DOTNET_RPG.Dtos.Fighter;
 using DOTNET_RPG.Models;
+using Microsoft.EntityFrameworkCore;
 using System.Linq;
 
 namespace DOTNET_RPG.Services.FighterService
@@ -13,9 +15,11 @@ namespace DOTNET_RPG.Services.FighterService
             new Fighter {Id = 200, Name = "Arthur"}
             };
         private readonly IMapper _mapper;
+        private readonly DataContext _context;
 
-        public FighterService(IMapper mapper)
+        public FighterService(IMapper mapper, DataContext context)
         {
+            _context = context;
             _mapper = mapper;
         }
         public async Task<ServiceResponse<List<GetFighterDto>>> AddFighter(AddFighterDto newFighter)
@@ -31,17 +35,19 @@ namespace DOTNET_RPG.Services.FighterService
         public async Task<ServiceResponse<List<GetFighterDto>>> GetAllFighters()
         {
             var serviceResponse = new ServiceResponse<List<GetFighterDto>>();
-            serviceResponse.Data = fighters.Select(c => _mapper.Map<GetFighterDto>(c)).ToList();
+            var dbFighters = await _context.Fighters.ToListAsync();
+            serviceResponse.Data = dbFighters.Select(c => _mapper.Map<GetFighterDto>(c)).ToList();
             return serviceResponse;
         }
 
         public async Task<ServiceResponse<GetFighterDto>> GetFighterById(int id)
         {
             var serviceResponse = new ServiceResponse<GetFighterDto>();
+            
             try
             {
-                Fighter fighter = fighters.First(c => c.Id == id);
-                serviceResponse.Data = _mapper.Map<GetFighterDto>(fighter);
+                var dbFighter = await _context.Fighters.FirstAsync(c => c.Id == id);
+                serviceResponse.Data = _mapper.Map<GetFighterDto>(dbFighter);
             }
             catch (Exception ex)
             {
