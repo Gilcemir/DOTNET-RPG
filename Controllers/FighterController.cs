@@ -45,7 +45,12 @@ namespace DOTNET_RPG.Controllers
         [HttpPut("{Id}")]
         public async Task<ActionResult<ServiceResponse<GetFighterDto>>> UpdateFighterById(AddFighterDto updatedFighter, int Id)
         {
-            return Ok(await _fighterService.UpdateFighterById(updatedFighter, Id));
+            var response = await _fighterService.UpdateFighterById(updatedFighter, Id); 
+            if(response.Data == null)
+            {
+                return NotFound(response);
+            }
+            return Ok(response);
         }
 
         [HttpPut]
