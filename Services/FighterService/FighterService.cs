@@ -25,10 +25,10 @@ namespace DOTNET_RPG.Services.FighterService
         public async Task<ServiceResponse<List<GetFighterDto>>> AddFighter(AddFighterDto newFighter)
         {
             var serviceResponse = new ServiceResponse<List<GetFighterDto>>();
-            Fighter fighter = _mapper.Map<Fighter>(newFighter);
-            fighter.Id = fighters.Max(c => c.Id) + 1;
-            fighters.Add(fighter);
-            serviceResponse.Data = fighters.Select(c => _mapper.Map<GetFighterDto>(c)).ToList();
+            Fighter fighter = _mapper.Map<Fighter>(newFighter);      
+            _context.Fighters.Add(fighter);
+            await _context.SaveChangesAsync();//write the changes in the db and also generates new ID
+            serviceResponse.Data = await _context.Fighters.Select(c => _mapper.Map<GetFighterDto>(c)).ToListAsync();
             return serviceResponse;
         }
 
@@ -62,7 +62,7 @@ namespace DOTNET_RPG.Services.FighterService
             var serviceResponse = new ServiceResponse<GetFighterDto>();
             try
             {
-                Fighter fighter = fighters.FirstOrDefault(c => c.Id == updatedFighter.Id);
+                Fighter fighter = await _context.Fighters.FirstOrDefaultAsync(c => c.Id == updatedFighter.Id);
 
                 fighter.Name = updatedFighter.Name;
                 fighter.HitPoints = updatedFighter.HitPoints;
@@ -72,6 +72,7 @@ namespace DOTNET_RPG.Services.FighterService
                 fighter.Strike = updatedFighter.Strike;
                 fighter.Origin = updatedFighter.Origin;
 
+                await _context.SaveChangesAsync();
                 serviceResponse.Data = _mapper.Map<GetFighterDto>(fighter);
             }
             catch (Exception ex)
