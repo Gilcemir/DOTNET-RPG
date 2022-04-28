@@ -18,6 +18,7 @@ builder.Services.AddControllers();
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
 builder.Services.AddScoped<IFighterService, FighterService>();//Register FighterService. If the controller wants to inject Interface, the implementation class will be fighterService
+builder.Services.AddScoped<IAuthRepository, AuthRepository>();
 
 builder.Services.AddAutoMapper(typeof(Program));
 
