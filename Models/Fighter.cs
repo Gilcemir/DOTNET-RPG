@@ -10,6 +10,6 @@ namespace DOTNET_RPG.Models
         public int Defense { get; set; } = 0;
         public int Strike { get; set; } = 0;
         public Country Origin { get; set; } = Country.Brazil;
-
+        public User User { get; set; }
     }
 }

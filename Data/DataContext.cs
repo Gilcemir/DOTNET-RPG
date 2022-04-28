@@ -10,5 +10,6 @@ namespace DOTNET_RPG.Data
             
         }
         public DbSet<Fighter> Fighters { get; set; }
+        public DbSet<User> Users { get; set; }
     }
 }
