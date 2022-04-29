@@ -1,10 +1,14 @@
 using DOTNET_RPG.Dtos.Fighter;
 using DOTNET_RPG.Models;
 using DOTNET_RPG.Services.FighterService;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using System.Linq;
+using System.Security.Claims;
+
 namespace DOTNET_RPG.Controllers
 {
+    [Authorize]
     [ApiController]
     [Route("[controller]")]
     public class FighterController : ControllerBase
@@ -21,8 +25,8 @@ namespace DOTNET_RPG.Controllers
         [HttpGet]
         public async Task<ActionResult<ServiceResponse<List<GetFighterDto>>>> Get()
         {
-            return Ok(await _fighterService.GetAllFighters());
-
+            int id = int.Parse(User.Claims.FirstOrDefault(c => c.Type == ClaimTypes.NameIdentifier).Value);
+            return Ok(await _fighterService.GetAllFighters(id));
         }
 
         [HttpGet("{Id}")]

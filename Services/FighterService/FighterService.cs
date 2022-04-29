@@ -28,10 +28,10 @@ namespace DOTNET_RPG.Services.FighterService
             return serviceResponse;
         }
 
-        public async Task<ServiceResponse<List<GetFighterDto>>> GetAllFighters()
+        public async Task<ServiceResponse<List<GetFighterDto>>> GetAllFighters(int userId)
         {
             var serviceResponse = new ServiceResponse<List<GetFighterDto>>();
-            var dbFighters = await _context.Fighters.ToListAsync();
+            var dbFighters = await _context.Fighters.Where(c => c.User.Id == userId).ToListAsync();
             serviceResponse.Data = dbFighters.Select(c => _mapper.Map<GetFighterDto>(c)).ToList();
             return serviceResponse;
         }
