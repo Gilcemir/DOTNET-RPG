@@ -10,16 +10,18 @@ var builder = WebApplication.CreateBuilder(args);
 
 // Add services to the container.
 
+//Configuration && Services
 
-var ConnectionStrings = builder.Configuration.GetConnectionString("DefaultConnection");
-Console.WriteLine(ConnectionStrings);
-builder.Services.AddDbContext<DataContext>(options => 
-                                            options.UseSqlServer(connectionString: ConnectionStrings));
+var configuration = builder.Configuration;
+var services = builder.Services;
 
-builder.Services.AddControllers();
+services.AddDbContext<DataContext>(options => 
+                                            options.UseSqlServer(configuration.GetConnectionString("DefaultConnection")));
+
+services.AddControllers();
 // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
-builder.Services.AddEndpointsApiExplorer();
-builder.Services.AddSwaggerGen( c =>
+services.AddEndpointsApiExplorer();
+services.AddSwaggerGen( c =>
 {
                                 c.AddSecurityDefinition("oauth2", new OpenApiSecurityScheme
                                 {
@@ -31,9 +33,9 @@ builder.Services.AddSwaggerGen( c =>
                                 c.OperationFilter<SecurityRequirementsOperationFilter>();
 
 });
-builder.Services.AddScoped<IFighterService, FighterService>();//Register FighterService. If the controller wants to inject Interface, the implementation class will be fighterService
-builder.Services.AddScoped<IAuthRepository, AuthRepository>();
-builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)//for this please install nugget package 
+services.AddScoped<IFighterService, FighterService>();//Register FighterService. If the controller wants to inject Interface, the implementation class will be fighterService
+services.AddScoped<IAuthRepository, AuthRepository>();
+services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)//for this please install nugget package 
                                     .AddJwtBearer(options =>
                                     {
                                         options.TokenValidationParameters = new TokenValidationParameters
@@ -45,7 +47,7 @@ builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)//for 
                                         };
                                     });
 
-builder.Services.AddAutoMapper(typeof(Program));
+services.AddAutoMapper(typeof(Program));
 
 var app = builder.Build();
 
