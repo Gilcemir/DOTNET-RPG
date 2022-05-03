@@ -76,5 +76,11 @@ namespace DOTNET_RPG.Controllers
             }
             return Ok(response);
         }
+
+        [HttpPost("Skill")]
+        public async Task<ActionResult<ServiceResponse<List<GetFighterDto>>>> AddFighterSkill(AddFighterSkillDto newFighterSkill)
+        {
+            return Ok(await _fighterService.AddFighterSkill(newFighterSkill));
+        }
     }
 }

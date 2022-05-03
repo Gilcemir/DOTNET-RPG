@@ -42,7 +42,10 @@ namespace DOTNET_RPG.Services.FighterService
         public async Task<ServiceResponse<List<GetFighterDto>>> GetAllFighters()
         {
             var serviceResponse = new ServiceResponse<List<GetFighterDto>>();
-            var dbFighters = await _context.Fighters.Where(c => c.User.Id == GetUserId()).ToListAsync();
+            var dbFighters = await _context.Fighters
+                                    .Include(c => c.Chant)
+                                    .Include(c => c.Skills)
+                                    .Where(c => c.User.Id == GetUserId()).ToListAsync();
             serviceResponse.Data = dbFighters.Select(c => _mapper.Map<GetFighterDto>(c)).ToList();
             return serviceResponse;
         }
@@ -53,7 +56,10 @@ namespace DOTNET_RPG.Services.FighterService
 
             try
             {
-                var dbFighter = await _context.Fighters.FirstAsync(f => f.Id == id && f.User.Id == GetUserId());
+                var dbFighter = await _context.Fighters
+                                    .Include(c => c.Chant)
+                                    .Include(c => c.Skills)
+                                    .FirstAsync(f => f.Id == id && f.User.Id == GetUserId());
                 serviceResponse.Data = _mapper.Map<GetFighterDto>(dbFighter);
             }
             catch (Exception ex)
@@ -70,9 +76,9 @@ namespace DOTNET_RPG.Services.FighterService
             try
             {
                 Fighter fighter = await _context.Fighters
-                    .Include(c=> c.User)
+                    .Include(c => c.User)
                     .FirstOrDefaultAsync(c => c.Id == updatedFighter.Id);
-                if(fighter.User.Id == GetUserId())
+                if (fighter.User.Id == GetUserId())
                 {
                     fighter.Name = updatedFighter.Name;
                     fighter.HitPoints = updatedFighter.HitPoints;
@@ -161,6 +167,43 @@ namespace DOTNET_RPG.Services.FighterService
             return serviceResponse;
         }
 
+        public async Task<ServiceResponse<GetFighterDto>> AddFighterSkill(AddFighterSkillDto newFighterSkill)
+        {
+            var response = new ServiceResponse<GetFighterDto>();
+            try
+            {
+                var fighter = await _context.Fighters
+                                    .Include(c => c.Chant)
+                                    .Include(c => c.Skills)
+                                    .FirstOrDefaultAsync(c => c.Id == newFighterSkill.FighterId && c.User.Id == GetUserId());
 
+                if (fighter == null)
+                {
+                    response.Success = false;
+                    response.Message = "Fighter not found.";
+                    return response;
+                }
+
+                var skill = await _context.Skills.FirstOrDefaultAsync(s => s.Id == newFighterSkill.SkillId);
+
+                if (skill == null)
+                {
+                    response.Success = false;
+                    response.Message = "Skill not found.";
+                    return response;
+                }
+
+                fighter.Skills.Add(skill);
+                await _context.SaveChangesAsync();
+
+                response.Data = _mapper.Map<GetFighterDto>(fighter);
+            }
+            catch (Exception ex)
+            {
+                response.Success = false;
+                response.Message = ex.Message;
+            }
+            return response;
+        }
     }
 }

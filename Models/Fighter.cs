@@ -13,5 +13,6 @@ namespace DOTNET_RPG.Models
         public User User { get; set; }
 
         public Chant Chant { get; set; }
+        public List<Skill> Skills { get; set; }
     }
 }
