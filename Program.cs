@@ -1,4 +1,5 @@
 using DOTNET_RPG.Data;
+using DOTNET_RPG.Services.ChantService;
 using DOTNET_RPG.Services.FighterService;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.EntityFrameworkCore;
@@ -36,7 +37,7 @@ services.AddSwaggerGen( c =>
 services.AddScoped<IFighterService, FighterService>();//Register FighterService. If the controller wants to inject Interface, the implementation class will be fighterService
 services.AddScoped<IAuthRepository, AuthRepository>();
 services.AddSingleton<IHttpContextAccessor, HttpContextAccessor>();
-
+services.AddScoped<IChantService, ChantService>();
 services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)//for this please install nugget package 
                                     .AddJwtBearer(options =>
                                     {
