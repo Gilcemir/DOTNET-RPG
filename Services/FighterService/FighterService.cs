@@ -4,6 +4,7 @@ using DOTNET_RPG.Dtos.Fighter;
 using DOTNET_RPG.Models;
 using Microsoft.EntityFrameworkCore;
 using System.Linq;
+using System.Security.Claims;
 
 namespace DOTNET_RPG.Services.FighterService
 {
@@ -13,11 +14,17 @@ namespace DOTNET_RPG.Services.FighterService
         private readonly IMapper _mapper;
         private readonly DataContext _context;
 
-        public FighterService(IMapper mapper, DataContext context)
+        public readonly IHttpContextAccessor _httpContextAccessor;
+
+        public FighterService(IMapper mapper, DataContext context, IHttpContextAccessor httpContextAccessor)
         {
             _context = context;
+            _httpContextAccessor = httpContextAccessor;
             _mapper = mapper;
         }
+
+        private int GetUserId() => int.Parse(_httpContextAccessor.HttpContext.User.FindFirstValue(ClaimTypes.NameIdentifier));
+
         public async Task<ServiceResponse<List<GetFighterDto>>> AddFighter(AddFighterDto newFighter)
         {
             var serviceResponse = new ServiceResponse<List<GetFighterDto>>();
@@ -28,10 +35,10 @@ namespace DOTNET_RPG.Services.FighterService
             return serviceResponse;
         }
 
-        public async Task<ServiceResponse<List<GetFighterDto>>> GetAllFighters(int userId)
+        public async Task<ServiceResponse<List<GetFighterDto>>> GetAllFighters()
         {
             var serviceResponse = new ServiceResponse<List<GetFighterDto>>();
-            var dbFighters = await _context.Fighters.Where(c => c.User.Id == userId).ToListAsync();
+            var dbFighters = await _context.Fighters.Where(c => c.User.Id == GetUserId()).ToListAsync();
             serviceResponse.Data = dbFighters.Select(c => _mapper.Map<GetFighterDto>(c)).ToList();
             return serviceResponse;
         }
@@ -121,5 +128,7 @@ namespace DOTNET_RPG.Services.FighterService
             }
             return serviceResponse;
         }
+
+
     }
 }

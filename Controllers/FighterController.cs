@@ -25,8 +25,7 @@ namespace DOTNET_RPG.Controllers
         [HttpGet]
         public async Task<ActionResult<ServiceResponse<List<GetFighterDto>>>> Get()
         {
-            int id = int.Parse(User.Claims.FirstOrDefault(c => c.Type == ClaimTypes.NameIdentifier).Value);
-            return Ok(await _fighterService.GetAllFighters(id));
+            return Ok(await _fighterService.GetAllFighters());
         }
 
         [HttpGet("{Id}")]

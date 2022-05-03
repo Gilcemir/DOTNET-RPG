@@ -35,6 +35,8 @@ services.AddSwaggerGen( c =>
 });
 services.AddScoped<IFighterService, FighterService>();//Register FighterService. If the controller wants to inject Interface, the implementation class will be fighterService
 services.AddScoped<IAuthRepository, AuthRepository>();
+services.AddSingleton<IHttpContextAccessor, HttpContextAccessor>();
+
 services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)//for this please install nugget package 
                                     .AddJwtBearer(options =>
                                     {
