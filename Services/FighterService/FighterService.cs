@@ -28,10 +28,14 @@ namespace DOTNET_RPG.Services.FighterService
         public async Task<ServiceResponse<List<GetFighterDto>>> AddFighter(AddFighterDto newFighter)
         {
             var serviceResponse = new ServiceResponse<List<GetFighterDto>>();
-            Fighter fighter = _mapper.Map<Fighter>(newFighter);      
+            Fighter fighter = _mapper.Map<Fighter>(newFighter);
+            fighter.User = await _context.Users.FirstOrDefaultAsync(u => u.Id == GetUserId());
             _context.Fighters.Add(fighter);
             await _context.SaveChangesAsync();//write the changes in the db and also generates new ID
-            serviceResponse.Data = await _context.Fighters.Select(c => _mapper.Map<GetFighterDto>(c)).ToListAsync();
+            serviceResponse.Data = await _context.Fighters
+                                                .Where(c => c.User.Id == GetUserId())
+                                                .Select(c => _mapper.Map<GetFighterDto>(c))
+                                                .ToListAsync();
             return serviceResponse;
         }
 
@@ -46,10 +50,10 @@ namespace DOTNET_RPG.Services.FighterService
         public async Task<ServiceResponse<GetFighterDto>> GetFighterById(int id)
         {
             var serviceResponse = new ServiceResponse<GetFighterDto>();
-            
+
             try
             {
-                var dbFighter = await _context.Fighters.FirstAsync(c => c.Id == id);
+                var dbFighter = await _context.Fighters.FirstAsync(f => f.Id == id && f.User.Id == GetUserId());
                 serviceResponse.Data = _mapper.Map<GetFighterDto>(dbFighter);
             }
             catch (Exception ex)
@@ -65,18 +69,27 @@ namespace DOTNET_RPG.Services.FighterService
             var serviceResponse = new ServiceResponse<GetFighterDto>();
             try
             {
-                Fighter fighter = await _context.Fighters.FirstOrDefaultAsync(c => c.Id == updatedFighter.Id);
+                Fighter fighter = await _context.Fighters
+                    .Include(c=> c.User)
+                    .FirstOrDefaultAsync(c => c.Id == updatedFighter.Id);
+                if(fighter.User.Id == GetUserId())
+                {
+                    fighter.Name = updatedFighter.Name;
+                    fighter.HitPoints = updatedFighter.HitPoints;
+                    fighter.Takedown = updatedFighter.Takedown;
+                    fighter.Submission = updatedFighter.Submission;
+                    fighter.Defense = updatedFighter.Defense;
+                    fighter.Strike = updatedFighter.Strike;
+                    fighter.Origin = updatedFighter.Origin;
 
-                fighter.Name = updatedFighter.Name;
-                fighter.HitPoints = updatedFighter.HitPoints;
-                fighter.Takedown = updatedFighter.Takedown;
-                fighter.Submission = updatedFighter.Submission;
-                fighter.Defense = updatedFighter.Defense;
-                fighter.Strike = updatedFighter.Strike;
-                fighter.Origin = updatedFighter.Origin;
-
-                await _context.SaveChangesAsync();
-                serviceResponse.Data = _mapper.Map<GetFighterDto>(fighter);
+                    await _context.SaveChangesAsync();
+                    serviceResponse.Data = _mapper.Map<GetFighterDto>(fighter);
+                }
+                else
+                {
+                    serviceResponse.Success = false;
+                    serviceResponse.Message = "Fighter not found";
+                }
             }
             catch (Exception ex)
             {
@@ -90,18 +103,27 @@ namespace DOTNET_RPG.Services.FighterService
             var serviceResponse = new ServiceResponse<GetFighterDto>();
             try
             {
-                Fighter fighter = await _context.Fighters.FirstOrDefaultAsync(c => c.Id == id);
+                Fighter fighter = await _context.Fighters
+                                .Include(c => c.User)
+                                .FirstOrDefaultAsync(c => c.Id == id);
+                if (fighter.User.Id == GetUserId())
+                {
+                    fighter.Name = updatedFighter.Name;
+                    fighter.HitPoints = updatedFighter.HitPoints;
+                    fighter.Takedown = updatedFighter.Takedown;
+                    fighter.Submission = updatedFighter.Submission;
+                    fighter.Defense = updatedFighter.Defense;
+                    fighter.Strike = updatedFighter.Strike;
+                    fighter.Origin = updatedFighter.Origin;
 
-                fighter.Name = updatedFighter.Name;
-                fighter.HitPoints = updatedFighter.HitPoints;
-                fighter.Takedown = updatedFighter.Takedown;
-                fighter.Submission = updatedFighter.Submission;
-                fighter.Defense = updatedFighter.Defense;
-                fighter.Strike = updatedFighter.Strike;
-                fighter.Origin = updatedFighter.Origin;
-
-                await _context.SaveChangesAsync();
-                serviceResponse.Data = _mapper.Map<GetFighterDto>(fighter);
+                    await _context.SaveChangesAsync();
+                    serviceResponse.Data = _mapper.Map<GetFighterDto>(fighter);
+                }
+                else
+                {
+                    serviceResponse.Success = false;
+                    serviceResponse.Message = "Fighter not found";
+                }
             }
             catch (Exception ex)
             {
@@ -116,10 +138,20 @@ namespace DOTNET_RPG.Services.FighterService
             var serviceResponse = new ServiceResponse<List<GetFighterDto>>();
             try
             {
-                Fighter fighter = await _context.Fighters.FirstAsync(c => c.Id == id);
-                _context.Fighters.Remove(fighter);
-                await _context.SaveChangesAsync();
-                serviceResponse.Data = _context.Fighters.Select(c => _mapper.Map<GetFighterDto>(c)).ToList();
+                Fighter fighter = await _context.Fighters.FirstOrDefaultAsync(c => c.Id == id && c.User.Id == GetUserId());
+                if (fighter != null)
+                {
+                    _context.Fighters.Remove(fighter);
+                    await _context.SaveChangesAsync();
+                    serviceResponse.Data = _context.Fighters
+                                            .Where(c => c.User.Id == GetUserId())
+                                            .Select(c => _mapper.Map<GetFighterDto>(c)).ToList();
+                }
+                else
+                {
+                    serviceResponse.Success = false;
+                    serviceResponse.Message = "Fighter not found";
+                }
             }
             catch (Exception ex)
             {

@@ -11,5 +11,7 @@ namespace DOTNET_RPG.Models
         public int Strike { get; set; } = 0;
         public Country Origin { get; set; } = Country.Brazil;
         public User User { get; set; }
+
+        public Chant Chant { get; set; }
     }
 }
