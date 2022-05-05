@@ -1,6 +1,7 @@
 using DOTNET_RPG.Data;
 using DOTNET_RPG.Services.ChantService;
 using DOTNET_RPG.Services.FighterService;
+using DOTNET_RPG.Services.FightService;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.IdentityModel.Tokens;
@@ -38,6 +39,7 @@ services.AddScoped<IFighterService, FighterService>();//Register FighterService.
 services.AddScoped<IAuthRepository, AuthRepository>();
 services.AddSingleton<IHttpContextAccessor, HttpContextAccessor>();
 services.AddScoped<IChantService, ChantService>();
+services.AddScoped<IFightService, FightService>();
 services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)//for this please install nugget package 
                                     .AddJwtBearer(options =>
                                     {

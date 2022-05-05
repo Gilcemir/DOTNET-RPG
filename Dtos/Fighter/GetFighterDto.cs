@@ -16,5 +16,8 @@ namespace DOTNET_RPG.Dtos.Fighter
         public Country Origin { get; set; } = Country.Brazil;
         public GetChantDto Chant { set; get; }
         public List<GetSkillDto> Skills { set; get; }
+        public int Fights { get; set; }
+        public int Victories { get; set; }
+        public int Defeats { get; set; }
     }
 }
