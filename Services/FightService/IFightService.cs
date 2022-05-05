@@ -7,6 +7,6 @@ namespace DOTNET_RPG.Services.FightService
     {
          Task<ServiceResponse<AttackResultDto>> ChantAttack(ChantAttackDto request);
          Task<ServiceResponse<AttackResultDto>> SkillAttack(SkillAttackDto request);
-         
+         Task<ServiceResponse<FightResultDto>> Fight(FightRequestDto request);
     }
 }
