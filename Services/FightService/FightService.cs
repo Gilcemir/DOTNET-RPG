@@ -1,3 +1,4 @@
+using AutoMapper;
 using DOTNET_RPG.Data;
 using DOTNET_RPG.Dtos.Fight;
 using DOTNET_RPG.Models;
@@ -8,8 +9,10 @@ namespace DOTNET_RPG.Services.FightService
     public class FightService : IFightService
     {
         private readonly DataContext _context;
-        public FightService(DataContext context)
+        private readonly IMapper _mapper;
+        public FightService(DataContext context, IMapper mapper)
         {
+            _mapper = mapper;
             _context = context;
 
         }
@@ -133,9 +136,9 @@ namespace DOTNET_RPG.Services.FightService
 
                 bool defeated = false;
 
-                while(!defeated)
+                while (!defeated)
                 {
-                    foreach(var attacker in fighters)
+                    foreach (var attacker in fighters)
                     {
                         var opponents = fighters.Where(c => c.Id != attacker.Id).ToList();
                         var opponent = opponents[new Random().Next(opponents.Count)];
@@ -144,7 +147,7 @@ namespace DOTNET_RPG.Services.FightService
                         string attackUsed = string.Empty;
 
                         bool useChant = new Random().Next(2) == 0;
-                        if(useChant)
+                        if (useChant)
                         {
                             attackUsed = attacker.Chant.Name;
                             damage = DoChantAttack(attacker, opponent);
@@ -152,13 +155,13 @@ namespace DOTNET_RPG.Services.FightService
                         else
                         {
                             var skill = attacker.Skills[new Random().Next(attacker.Skills.Count)];
-                            attackUsed =skill.Name;
+                            attackUsed = skill.Name;
                             damage = DoSkillAttack(attacker, opponent, skill);
                         }
 
-                        response.Data.Log  
+                        response.Data.Log
                                     .Add($"{attacker.Name} attacks {opponent.Name} using {attackUsed} with {damage} damage");
-                        if(opponent.HitPoints <= 0)
+                        if (opponent.HitPoints <= 0)
                         {
                             defeated = true;
                             attacker.Victories++;
@@ -170,10 +173,11 @@ namespace DOTNET_RPG.Services.FightService
                     }
                 }
                 fighters.ForEach(c =>
-                       { c.Fights++;
-                        c.HitPoints = 100;
+                       {
+                           c.Fights++;
+                           c.HitPoints = 100;
                        });
-                       await _context.SaveChangesAsync();
+                await _context.SaveChangesAsync();
             }
             catch (Exception ex)
             {
@@ -184,5 +188,20 @@ namespace DOTNET_RPG.Services.FightService
             return response;
         }
 
+        public async Task<ServiceResponse<List<HighScoreDto>>> GetHighScore()
+        {
+            var fighters = await _context.Fighters
+                            .Where(f => f.Fights > 0)
+                            .OrderByDescending(f => f.Victories)
+                            .ThenBy(f => f.Defeats)
+                            .ToListAsync();
+
+            var response = new ServiceResponse<List<HighScoreDto>>
+            {
+                Data = fighters.Select(f => _mapper.Map<HighScoreDto>(f)).ToList()
+            };
+
+            return response;
+        }
     }
 }
