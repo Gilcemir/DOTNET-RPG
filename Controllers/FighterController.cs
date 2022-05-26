@@ -8,7 +8,7 @@ using System.Security.Claims;
 
 namespace DOTNET_RPG.Controllers
 {
-    [Authorize]
+    [Authorize(Roles = "Player,Admin")]
     [ApiController]
     [Route("[controller]")]
     public class FighterController : ControllerBase

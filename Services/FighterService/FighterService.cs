@@ -24,7 +24,7 @@ namespace DOTNET_RPG.Services.FighterService
         }
 
         private int GetUserId() => int.Parse(_httpContextAccessor.HttpContext.User.FindFirstValue(ClaimTypes.NameIdentifier));
-
+        private string GetUserRole() => _httpContextAccessor.HttpContext.User.FindFirstValue(ClaimTypes.Role);
         public async Task<ServiceResponse<List<GetFighterDto>>> AddFighter(AddFighterDto newFighter)
         {
             var serviceResponse = new ServiceResponse<List<GetFighterDto>>();
@@ -42,7 +42,10 @@ namespace DOTNET_RPG.Services.FighterService
         public async Task<ServiceResponse<List<GetFighterDto>>> GetAllFighters()
         {
             var serviceResponse = new ServiceResponse<List<GetFighterDto>>();
-            var dbFighters = await _context.Fighters
+            Console.WriteLine(GetUserRole().Equals("Admin"));
+            var dbFighters = 
+            GetUserRole().Equals("Admin") ? await _context.Fighters.ToListAsync() :
+                                            await _context.Fighters
                                     .Include(c => c.Chant)
                                     .Include(c => c.Skills)
                                     .Where(c => c.User.Id == GetUserId()).ToListAsync();

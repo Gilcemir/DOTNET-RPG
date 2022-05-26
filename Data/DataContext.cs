@@ -24,6 +24,8 @@ namespace DOTNET_RPG.Data
                 new Skill {Id = 5, Name = "Ippon Seoi Nage", Damage = 10},
                 new Skill {Id = 6, Name = "Arm-Lock", Damage = 5}
             );
+            modelBuilder.Entity<User>()
+                .Property(user => user.Role).HasDefaultValue("Player");
         }
     }
 }
